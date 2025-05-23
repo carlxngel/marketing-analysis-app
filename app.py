@@ -522,7 +522,7 @@ elif section == "Análisis Exploratorio (EDA)":
     """, unsafe_allow_html=True)
 
     # Create tabs for different analyses
-    tab1, tab2, tab3, tab4 = st.tabs(["Canales de Marketing", "Rendimiento y ROI", "Patrones Temporales", "Correlaciones"])
+    tab1, tab2, tab3, tab4 = st.tabs(["Canales de Marketing", "Tipos de campaña", "Rendimiento y ROI", "Patrones Temporales"])
 
     with tab1:
         st.markdown("""
@@ -538,36 +538,99 @@ elif section == "Análisis Exploratorio (EDA)":
             # Distribución de campañas por canal
             channel_counts = df['canal'].value_counts()
             fig_channel_dist = px.pie(values=channel_counts.values, 
-                                    names=channel_counts.index, 
-                                    title='Distribución de Campañas por Canal', 
-                                    hole=0.4)
+                        names=channel_counts.index, 
+                        title='Distribución de Campañas por Canal', 
+                        hole=0.4)
             st.plotly_chart(fig_channel_dist, use_container_width=True)
             
             st.markdown("""
-            **Insights:**
-            - Promotion domina con ~35% de las campañas
-            - Referral muestra baja utilización (~20%) pese a su eficiencia
-            - Distribución desbalanceada sugiere oportunidad de optimización
-            """)
+            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; border-left: 5px solid #1f77b4;">
+            <strong>Insights de Distribución:</strong>
+            <ul>
+                <li>El canal Promotion es ligeramente más utilizado.</li>
+                <li>Las empresas utilizan de forma equilibrada los diferentes canales de marketing, sin depender excesivamente de uno solo.</li>
+            </ul>
+            </div>
+            """, unsafe_allow_html=True)
         
         with col2:
             # ROI promedio por canal
             channel_roi = df.groupby('canal')['roi_num'].mean().reset_index()
             fig_channel_roi = px.bar(channel_roi, 
-                                   x='canal', 
-                                   y='roi_num',
-                                   title='ROI Promedio por Canal',
-                                   color='canal')
+                       x='canal', 
+                       y='roi_num',
+                       title='ROI Promedio por Canal',
+                       color='canal')
             st.plotly_chart(fig_channel_roi, use_container_width=True)
             
             st.markdown("""
-            **Insights:**
-            - Referral lidera en ROI (0.575)
-            - Promotion muestra ROI más bajo pese a mayor uso
-            - Diferencia de hasta 25% entre canales
-            """)
+            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; border-left: 5px solid #1f77b4;">
+            <strong>Insights de ROI:</strong>
+            <ul>
+                <li>Referral lidera en ROI (0.575)</li>
+                <li>Promotion muestra ROI más bajo pese a mayor uso</li>
+                <li>Las diferencias de ROI entre canales no son significativas</li>
+            </ul>
+            </div>
+            """, unsafe_allow_html=True)
 
     with tab2:
+            # Análisis de Campaña
+            st.markdown("""
+            <div class="data-card">
+                <h3>5. Análisis de Campaña</h3>
+                <p>Evaluación de ingresos y duración por tipo de campaña.</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+            col1, col2 = st.columns(2)
+
+            with col1:
+                # Ingresos promedio por tipo de campaña
+                df_filtered = df[~df['tipo'].isin(['B2B', 'sin datos'])]
+                campaign_revenue = df_filtered.groupby('tipo')['facturación_num'].mean().reset_index()
+                fig_campaign_rev = px.bar(campaign_revenue,
+                            x='tipo',
+                            y='facturación_num',
+                            title='Ingresos Promedio por Tipo de Campaña',
+                            color='tipo')
+                fig_campaign_rev.update_layout(xaxis_title="Tipo de Campaña",
+                             yaxis_title="Facturación Promedio")
+                st.plotly_chart(fig_campaign_rev, use_container_width=True)
+
+                st.markdown("""
+                <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; border-left: 5px solid #1f77b4;">
+                <strong>Insights de Ingresos:</strong>
+                <ul>
+                <li>Las campañas de social media, podcast y email generan los ingresos promedio más altos, superando los 500k.</li>
+                <li>Las campañas de webinar generar ingresos ligeramente inferiores a las otras tres principales.</li>
+                <li>Las campañas de eventos tienen una facturación promedio significativamente menor.</li>
+                </ul>
+                </div>
+                """, unsafe_allow_html=True)
+
+            with col2:
+                # Distribución de duración por tipo de campaña
+                df_filtered = df[~df['tipo'].isin(['B2B', 'sin datos'])]
+                fig_duration = px.box(df_filtered,
+                        x='tipo',
+                        y='duracion_num',
+                        color='tipo', 
+                        title='Distribución de Duración por Tipo de Campaña')
+                fig_duration.update_layout(xaxis_title="Tipo de Campaña",
+                             yaxis_title="Duración (días)")
+                st.plotly_chart(fig_duration, use_container_width=True)
+
+                st.markdown("""
+                <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; border-left: 5px solid #1f77b4;">
+                <strong>Insights de Duración:</strong>
+                <ul>
+                <li>Todas las campañas tienen una distribución de duración similar.</li>
+                <li>No se observa una diferencia clara de duración entre los tipos de campaña.</li>
+                </ul>
+                </div>
+                """, unsafe_allow_html=True)
+    with tab3:
         st.markdown("""
         <div class="data-card">
             <h3>2. Análisis de Rendimiento y ROI</h3>
@@ -601,7 +664,7 @@ elif section == "Análisis Exploratorio (EDA)":
                                       nbins=30)
             st.plotly_chart(fig_roi_hist, use_container_width=True)
 
-    with tab3:
+    with tab4:
         st.markdown("""
         <div class="data-card">
             <h3>3. Análisis de Patrones Temporales</h3>
@@ -636,32 +699,6 @@ elif section == "Análisis Exploratorio (EDA)":
                                     color='canal',
                                     title='Duración vs Facturación')
             st.plotly_chart(fig_dur_fact, use_container_width=True)
-
-    with tab4:
-        st.markdown("""
-        <div class="data-card">
-            <h3>4. Análisis de Correlaciones</h3>
-            <p>Exploración de relaciones entre variables clave.</p>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # Matriz de correlación
-        numeric_cols = ['inversión_num', 'facturación_num', 'roi_num', 'ratio_conv_num', 'duracion_num']
-        corr_matrix = df[numeric_cols].corr()
-        
-        fig_corr = px.imshow(corr_matrix,
-                            title='Matriz de Correlaciones',
-                            color_continuous_scale='RdBu')
-        st.plotly_chart(fig_corr, use_container_width=True)
-        
-        st.markdown("""
-        **Conclusiones Generales del Análisis:**
-        1. Referral es el canal más eficiente (ROI 0.575)
-        2. Existe estacionalidad clara con 4 picos anuales
-        3. Inversión óptima identificada entre 0.3-0.5M
-        4. Oportunidad de optimización en duración de campañas
-        5. Necesidad de rebalancear distribución de canales
-        """)
 
 # --- Insights y Recomendaciones ---
 elif section == "Insights y Recomendaciones":
@@ -732,7 +769,7 @@ elif section == "Insights y Recomendaciones":
     metrics = [
         {"icon": "📈", "value": "0.54", "label": "ROI Promedio", "delta": "+15%"},
         {"icon": "🎯", "value": "Referral", "label": "Mejor Canal", "delta": "0.575 ROI"},
-        {"icon": "⏱️", "value": "350 días", "label": "Duración Óptima", "delta": "+25%"},
+        {"icon": "⏱️", "value": "400 días", "label": "Duración Óptima", "delta": "+25%"},
         {"icon": "💡", "value": "20%", "label": "Potencial Mejora", "delta": "proyectado"}
     ]
 
@@ -756,22 +793,26 @@ elif section == "Insights y Recomendaciones":
         {
             "icon": "📊", 
             "title": "Canales", 
-            "desc": "Referral lidera ROI con 57.5%, superando por 25% el promedio. Las campañas de referidos muestran mayor retención y valor del cliente a largo plazo."
+            "desc": "Referral lidera ROI con 57.5%, superando por 25% el promedio. "
+            "Las campañas de referidos muestran mayor retención y valor del cliente a largo plazo."
         },
         {
             "icon": "💰", 
             "title": "Inversión", 
-            "desc": "Punto óptimo de inversión identificado entre 0.3-0.5M con ROI promedio de 0.54. Inversiones mayores muestran rendimientos decrecientes."
+            "desc": "Punto óptimo de inversión identificado entre 0.3-0.5M con ROI promedio de 0.54. "
+            "Inversiones mayores muestran rendimientos decrecientes."
         },
         {
             "icon": "📈", 
             "title": "Conversión", 
-            "desc": "Email destaca con tasa de conversión 35% superior al promedio. Especialmente efectivo en retención de clientes y reactivación."
+            "desc": "Email destaca con tasa de conversión 35% superior al promedio. "
+            "Especialmente efectivo en retención de clientes y reactivación."
         },
         {
             "icon": "🕒", 
             "title": "Temporalidad", 
-            "desc": "4 picos estacionales identificados en Q1,Q2,Q3,Q4 con máximos en marzo y septiembre. Las campañas alineadas muestran 40% mejor rendimiento."
+            "desc": "4 picos estacionales identificados en Q1,Q2,Q3,Q4 con máximos en marzo y septiembre. "
+            "Las campañas alineadas muestran 40% mejor rendimiento."
         }
     ]
     
@@ -786,60 +827,52 @@ elif section == "Insights y Recomendaciones":
 
     # Plan de acción basado en insights
     st.markdown('<h2 class="section-title">🎯 Recomendaciones</h2>', unsafe_allow_html=True)
-    
-    tabs = st.tabs(["Prioridad Alta", "Prioridad Media"])
-    
-    with tabs[0]:
-        col1, col2 = st.columns(2)
-        with col1:
-            st.markdown("""
-            <div class="process-step">
-                <div style="font-size: 1.5em; margin-right: 1em">⚡</div>
-                <div>
-                    <h4>Potenciar Canal Referral</h4>
-                    <p>• Aumentar presupuesto Referral (+25%)</p>
-                    <p>• Implementar programa de referidos</p>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        with col2:
-            st.markdown("""
-            <div class="process-step">
-                <div style="font-size: 1.5em; margin-right: 1em">🎯</div>
-                <div>
-                    <h4>Optimizar Email Marketing</h4>
-                    <p>• Mejorar segmentación emails</p>
-                    <p>• Reforzar campañas retención</p>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
 
-    with tabs[1]:
-        col1, col2 = st.columns(2)
-        with col1:
-            st.markdown("""
-            <div class="process-step">
-                <div style="font-size: 1.5em; margin-right: 1em">⏱️</div>
-                <div>
-                    <h4>Ajuste Temporal</h4>
-                    <p>• Priorizar meses pico (mar, sep)</p>
-                    <p>• Optimizar duración a 350 días</p>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("""
+        <div class="process-step">
+            <div style="font-size: 1.5em; margin-right: 1em">⚡</div>
+            <div>
+                <h4>Potenciar Canal Referral</h4>
+                <p>Especialmente con campañas de bajo coste y alta segmentación como Email Marketing.</p>
+                
+        </div>
+        """, unsafe_allow_html=True)
+
+    with col2:
+        st.markdown("""
+        <div class="process-step">
+            <div style="font-size: 1.5em; margin-right: 1em">🎯</div>
+            <div>
+                <h4>Ajuste del ROI objetivo</h4>
+                <p>Establecer un ROI objetivo mínimo de 0.6. Ajustar campañas que estén por debajo.</p>
         
-        with col2:
-            st.markdown("""
-            <div class="process-step">
-                <div style="font-size: 1.5em; margin-right: 1em">💰</div>
-                <div>
-                    <h4>Inversión Óptima</h4>
-                    <p>• Mantener rango 0.3-0.5M</p>
-                    <p>• Evitar inversiones excesivas</p>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+        </div>
+        """, unsafe_allow_html=True)
+
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("""
+        <div class="process-step">
+            <div style="font-size: 1.5em; margin-right: 1em">⏱️</div>
+            <div>
+                <h4>Ajuste Temporal</h4>
+                <p>Priorizar meses pico (marzo y septiembre). Optimizar duración a 400 días.</p>
+        
+        </div>
+        """, unsafe_allow_html=True)
+
+    with col2:
+        st.markdown("""
+        <div class="process-step">
+            <div style="font-size: 1.5em; margin-right: 1em">💰</div>
+            <div>
+                <h4>Inversión Óptima</h4>
+                <p>Mantener rango 0.3-0.5M. Evitar inversiones excesivas.</p>
+        
+        </div>
+        """, unsafe_allow_html=True)
 
 
 # Footer
