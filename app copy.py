@@ -12,6 +12,10 @@ warnings.filterwarnings("ignore")
 
 st.set_page_config(page_title="Análisis y Optimización de Campañas de Marketing", layout="wide")
 
+# Title and divider
+st.title("Análisis y Optimización de Campañas de Marketing")
+st.markdown("---")
+
 # --- Sidebar Navigation ---
 st.sidebar.title("Navegación")
 section = st.sidebar.radio(
@@ -43,42 +47,165 @@ df = load_data()
 
 # --- Introducción ---
 if section == "Introducción":
-    st.title("Análisis y Optimización de Campañas de Marketing")
+    # Custom CSS for consistent styling
     st.markdown("""
-    ## Proyecto de Análisis Avanzado de Marketing Digital
+    <style>
+    /* General styles */
+    .section-title {
+        font-size: 2.5em;
+        color: #1f77b4;
+        text-align: center;
+        margin: 2em 0 1em 0;
+        padding-bottom: 0.5em;
+        border-bottom: 3px solid #ddd;  /* Increased border thickness */
+    }
     
-    Este proyecto aborda el análisis exhaustivo de campañas de marketing digital, aplicando técnicas de ciencia de datos para extraer insights accionables y recomendaciones estratégicas. Desde la limpieza y preprocesamiento hasta la visualización avanzada y la interpretación de resultados, este análisis ofrece una visión completa del rendimiento de las campañas.
+    .card {
+        background-color: white;
+        padding: 1.5em;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);  /* Increased shadow */
+        margin: 1em 0;
+        transition: transform 0.3s ease;
+        border: 1px solid #e0e0e0;  /* Added border */
+    }
     
-    ### Objetivos del Proyecto:
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.25);  /* Increased hover shadow */
+    }
     
-    1. **Identificar los canales y tipos de campañas más eficientes** en términos de ROI y conversión.
-    2. **Analizar la relación entre inversión y beneficio** para optimizar la asignación de presupuesto.
-    3. **Detectar patrones estacionales** que influyan en el rendimiento de las campañas.
-    4. **Proporcionar recomendaciones accionables** basadas en datos para mejorar estrategias futuras.
+    .metric-card {
+        background-color: #f8f9fa;  /* Light background */
+        padding: 1.5em;
+        border-radius: 10px;
+        text-align: center;
+        border-left: 6px solid #1f77b4;  /* Thicker accent border */
+        margin: 0.5em;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.15);  /* Added shadow */
+    }
     
-    ### Estructura del Proyecto:
+    .metric-value {
+        font-size: 2em;
+        font-weight: bold;
+        color: #0d6efd;  /* Brighter blue */
+        margin: 0.2em 0;
+    }
     
-    - **Preprocesamiento de datos**: Limpieza, transformación y enriquecimiento del dataset.
-    - **Análisis Exploratorio (EDA)**: Visualizaciones y análisis estadísticos para extraer patrones y relaciones.
-    - **Insights y Recomendaciones**: Conclusiones clave y propuestas estratégicas.
+    .metric-label {
+        color: #343a40;  /* Darker text */
+        font-size: 1em;
+        font-weight: 500;  /* Semi-bold */
+    }
     
-    ### Metodología:
+    .process-step {
+        background-color: white;
+        padding: 1.2em;
+        border-radius: 8px;
+        margin: 0.5em 0;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.1);  /* Increased shadow */
+        border: 1px solid #dee2e6;  /* Added border */
+    }
     
-    Utilizamos Python como lenguaje principal, con bibliotecas como pandas para manipulación de datos, 
-    matplotlib y seaborn para visualización, y técnicas estadísticas para el análisis de rendimiento 
-    y correlaciones entre variables.
-    """)
+    /* Animations */
+    @keyframes fadeIn {
+        from {opacity: 0;}
+        to {opacity: 1;}
+    }
+    
+    .animated {
+        animation: fadeIn 1s ease;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-    # Mostrar algunos KPIs generales
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.metric("Total Campañas", f"{len(df)}")
-    with col2:
-        st.metric("ROI Promedio", f"{df['roi_num'].mean():.2f}")
-    with col3:
-        st.metric("Tasa Conversión Media", f"{df['ratio_conv_num'].mean():.2f}")
-    with col4:
-        st.metric("Canales Utilizados", f"{df['canal'].nunique()}")
+    # Project Objectives Section
+    st.markdown('<h1 class="section-title animated">🎯 Objetivos del Proyecto</h1>', unsafe_allow_html=True)
+    
+    col1, col2 = st.columns(2)
+    
+    objectives = [
+        {"icon": "📊", "title": "Identificar Canales Óptimos", "desc": "Análisis de eficiencia por canal y tipo de campaña"},
+        {"icon": "💰", "title": "Optimizar Presupuestos", "desc": "Maximización del ROI en cada campaña"},
+        {"icon": "📈", "title": "Detectar Estacionalidad", "desc": "Identificación de patrones temporales"},
+        {"icon": "💡", "title": "Generar Recomendaciones", "desc": "Estrategias basadas en datos"}
+    ]
+    
+    for i, obj in enumerate(objectives):
+        with col1 if i < 2 else col2:
+            st.markdown(f"""
+            <div class="card animated">
+                <h3>{obj['icon']} {obj['title']}</h3>
+                <p>{obj['desc']}</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+    # Methodology Section
+    st.markdown('<h1 class="section-title animated">🛠️ Metodología</h1>', unsafe_allow_html=True)
+    
+    tabs = st.tabs(["💻 Herramientas", "📝 Proceso", "⚡ Técnicas"])
+    
+    with tabs[0]:
+        col1, col2, col3, col4 = st.columns(4)
+        tools = [
+            {"icon": "🐍", "name": "Python", "desc": "Análisis de datos"},
+            {"icon": "📊", "name": "Pandas", "desc": "Manipulación de datos"},
+            {"icon": "💻", "name": "VS Code", "desc": "Desarrollo"},
+            {"icon": "📈", "name": "Power BI", "desc": "Visualización"}
+        ]
+        
+        for col, tool in zip([col1, col2, col3, col4], tools):
+            with col:
+                st.markdown(f"""
+                <div class="metric-card">
+                    <div style="font-size: 2em">{tool['icon']}</div>
+                    <div class="metric-value">{tool['name']}</div>
+                    <div class="metric-label">{tool['desc']}</div>
+                </div>
+                """, unsafe_allow_html=True)
+    
+    with tabs[1]:
+        process_steps = [
+            {"icon": "🔍", "step": "Exploración inicial", "desc": "Análisis preliminar"},
+            {"icon": "🧹", "step": "Limpieza", "desc": "Preparación de datos"},
+            {"icon": "📊", "step": "Análisis", "desc": "Identificación de patrones"},
+            {"icon": "📈", "step": "Visualización", "desc": "Creación de dashboards"},
+            {"icon": "💡", "step": "Insights", "desc": "Conclusiones"}
+        ]
+        
+        for step in process_steps:
+            st.markdown(f"""
+            <div class="process-step">
+                <div style="font-size: 1.5em; margin-right: 1em">{step['icon']}</div>
+                <div>
+                    <h4 style="margin: 0">{step['step']}</h4>
+                    <p style="margin: 0; color: #666">{step['desc']}</p>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+    with tabs[2]:
+        col1, col2 = st.columns(2)
+        techniques = [
+            {"icon": "📊", "name": "Análisis Estadístico"},
+            {"icon": "📈", "name": "Visualización Avanzada"},
+            {"icon": "🔍", "name": "Detección de Patrones"},
+            {"icon": "🔗", "name": "Análisis de Correlaciones"},
+            {"icon": "🤖", "name": "Machine Learning Básico"}
+        ]
+        
+        for i, tech in enumerate(techniques):
+            with col1 if i % 2 == 0 else col2:
+                st.markdown(f"""
+                <div class="card">
+                    <div style="display: flex; align-items: center">
+                        <span style="font-size: 1.5em; margin-right: 0.5em">{tech['icon']}</span>
+                        <span>{tech['name']}</span>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
 
 # --- Preprocesamiento ---
 elif section == "Preprocesamiento":
