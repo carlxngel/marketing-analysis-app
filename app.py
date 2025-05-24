@@ -17,11 +17,13 @@ st.title("Análisis y Optimización de Campañas de Marketing")
 st.markdown("---")
 
 # --- Sidebar Navigation ---
+st.sidebar.image("logo upgrade.png", width=100)
 st.sidebar.title("Navegación")
 section = st.sidebar.radio(
-    "Ir a la sección:",
+    "Seleccione una sección",
     ("Introducción", "Preprocesamiento", "Análisis Exploratorio (EDA)", "Insights y Recomendaciones")
 )
+
 
 # --- Load Data ---
 @st.cache_data
