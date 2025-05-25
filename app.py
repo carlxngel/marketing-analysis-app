@@ -524,7 +524,7 @@ elif section == "Análisis Exploratorio (EDA)":
     """, unsafe_allow_html=True)
 
     # Create tabs for different analyses
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(["Canales de Marketing", "Tipos de campaña", "Rendimiento y ROI", "Patrones Temporales", "Campaña más Exitosa"])
+    tab1, tab2, tab3, tab4 = st.tabs(["Canales de Marketing", "Tipos de campaña", "Rendimiento y ROI", "Patrones Temporales"])
 
     with tab1:
         st.markdown("""
@@ -732,106 +732,6 @@ elif section == "Análisis Exploratorio (EDA)":
             <li>La duración óptima se encuentra entre 300-500 días</li>
             <li>No hay diferencias significativas entre canales</li>
             <li>Las campañas cortas muestran mayor variabilidad en facturación</li>
-            </ul>
-            </div>
-            """, unsafe_allow_html=True)
-            # Creating the "Best Campaign Analysis" section at the end of the EDA tab
-            st.markdown("""
-            <div class="data-card">
-                <h3>5. Análisis de Campaña más Exitosa</h3>
-                <p>Evaluación detallada de la campaña con mayor beneficio neto.</p>
-            </div>
-            """, unsafe_allow_html=True)
-
-            # Get the campaign with highest net profit
-            best_campaign = df.nlargest(1, 'beneficio_neto_num').iloc[0]
-
-            col1, col2 = st.columns(2)
-
-        with tab5:
-            st.markdown("""
-            <div class="data-card">
-                <h3>5. Análisis de Campaña más Exitosa</h3>
-                <p>Evaluación detallada de la campaña con mayor beneficio neto.</p>
-            </div>
-            """, unsafe_allow_html=True)
-
-            # Get the campaign with highest net profit
-            best_campaign = df.nlargest(1, 'beneficio_neto_num').iloc[0]
-
-            col1, col2 = st.columns(2)
-
-            with col1:
-                # Create metrics card for best campaign
-                metrics = {
-                    'Beneficio Neto': f"€{best_campaign['beneficio_neto_num']:,.2f}",
-                    'ROI': f"{best_campaign['roi_num']:.2%}",
-                    'Canal': best_campaign['canal'],
-                    'Tipo': best_campaign['tipo'],
-                    'Duración': f"{best_campaign['duracion_num']} días",
-                    'Ratio Conversión': f"{best_campaign['ratio_conv_num']:.2%}"
-                }
-                
-                st.markdown("""
-                <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 6px solid #28a745;">
-                    <h4>📊 Métricas de la Mejor Campaña</h4>
-                </div>
-                """, unsafe_allow_html=True)
-                
-                for key, value in metrics.items():
-                    st.metric(label=key, value=value)
-
-            with col2:
-                # Create radar chart comparing best campaign vs average
-                categories = ['inversión_num', 'facturación_num', 'roi_num', 'ratio_conv_num', 'duracion_num']
-                
-                # Calculate averages
-                avg_values = df[categories].mean()
-                best_values = best_campaign[categories]
-                
-                # Normalize values for radar chart
-                max_values = df[categories].max()
-                avg_normalized = avg_values / max_values
-                best_normalized = best_values / max_values
-                
-                fig = go.Figure()
-                
-                fig.add_trace(go.Scatterpolar(
-                    r=best_normalized,
-                    theta=categories,
-                    fill='toself',
-                    name='Mejor Campaña'
-                ))
-                
-                fig.add_trace(go.Scatterpolar(
-                    r=avg_normalized,
-                    theta=categories,
-                    fill='toself',
-                    name='Promedio'
-                ))
-                
-                fig.update_layout(
-                    polar=dict(
-                        radialaxis=dict(
-                            visible=True,
-                            range=[0, 1]
-                        )),
-                    showlegend=True,
-                    title='Comparativa vs Promedio'
-                )
-                
-                st.plotly_chart(fig, use_container_width=True)
-
-            # Key insights
-            st.markdown("""
-            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; border-left: 5px solid #1f77b4;">
-            <strong>Insights de la Mejor Campaña:</strong>
-            <ul>
-            <li>Superó el ROI promedio en más de un 30%</li>
-            <li>La duración fue un 15% menor que la media manteniendo alta efectividad</li>
-            <li>El ratio de conversión fue excepcional, duplicando el promedio</li>
-            <li>La combinación canal-tipo demostró ser la más efectiva</li>
-            <li>La inversión fue optimizada para maximizar el beneficio neto</li>
             </ul>
             </div>
             """, unsafe_allow_html=True)
