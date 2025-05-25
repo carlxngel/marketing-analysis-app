@@ -736,6 +736,7 @@ elif section == "Análisis Exploratorio (EDA)":
             </div>
             """, unsafe_allow_html=True)
 
+
 # --- Insights y Recomendaciones ---
 elif section == "Insights y Recomendaciones":
     # Custom CSS para mantener consistencia con introducción
